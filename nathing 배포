@@ -1,0 +1,105 @@
+① Spring Boot API를 Render에 배포
+🔹 1. Render 계정 생성
+https://render.com 에 가입
+
+GitHub 연동
+
+🔹 2. Spring Boot 프로젝트 GitHub에 업로드
+build.gradle or pom.xml 포함된 전체 프로젝트를 깃허브에 올림
+
+🔹 3. Render에 Web Service 생성
+Render 대시보드 → "New Web Service"
+
+GitHub 레포 선택
+
+빌드 명령어: ./gradlew build
+
+Start 명령어: java -jar build/libs/your-app.jar
+
+포트 설정: 기본 8080 → Render가 자동 인식
+
+💡 CORS 설정 꼭 해줘야 해!
+
+java
+복사
+편집
+// WebConfig.java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("https://nothing-app.vercel.app")
+                .allowedMethods("*");
+    }
+}
+🔹 4. Render에서 배포된 API 주소 확인
+예: https://nothing-api.onrender.com
+
+② Flutter Web을 Vercel에 배포
+🔹 1. Flutter Web 빌드
+bash
+복사
+편집
+flutter build web
+🔹 2. 빌드된 폴더 (build/web)을 GitHub에 올림
+새 레포 생성 (예: nothing-frontend)
+
+build/web 폴더 안의 파일을 그대로 업로드
+
+🔹 3. Vercel에서 프로젝트 생성
+https://vercel.com 에서 계정 생성 → GitHub 연동
+
+새 프로젝트 생성
+
+프레임워크: 없음 (Other)
+
+빌드 명령어: 없음
+
+배포 폴더: . (현재 디렉토리 그대로)
+
+💡 Flutter Web 프로젝트를 통째로 하나의 GitHub 레포로 관리하면 됨 (빌드 결과물 기준)
+
+③ API 연동 (Flutter → Spring API)
+🔹 1. Flutter에서 HTTP 호출 주소 수정
+dart
+복사
+편집
+final url = Uri.parse('https://nothing-api.onrender.com/api/posts');
+final response = await http.get(url);
+localhost로 되어 있으면 안됨!
+
+반드시 https://nothing-api.onrender.com 같은 Render API 주소로 수정
+
+④ 테스트
+브라우저에서 https://nothing-app.vercel.app 접속
+
+Flutter Web UI가 뜨고
+
+내부에서 Spring API (https://nothing-api.onrender.com)로 데이터 요청
+
+실제 데이터가 화면에 출력되면 성공
+
+🚀 참고: 개발 중 주의할 점
+문제	해결
+API 호출 실패 (CORS)	백엔드 CORS 설정 확인
+API URL 잘못됨	Flutter 코드에 배포된 Render URL을 정확히 입력
+Flutter에서 안 보임	Flutter Web 빌드 후 build/web 정확히 업로드
+
+🙋 원하면 도와줄게
+Render 설정 예제
+
+Flutter Web GitHub 업로드 샘플
+
+Vercel 설정 전체 캡처
+
+Spring Boot용 application.yml 예시 등
+
+어느 쪽 먼저 할래?
+
+✅ Spring Boot API Render 배포부터 시작
+
+✅ Flutter Web Vercel 배포부터 시작
+
+🔧 둘 다 같이 진행
+선택해줘!
